@@ -11,15 +11,21 @@ module ALSU (A,
              clk,
              rst,
              out,
-             leds);
+             leds,
+             anode,
+             cathode);
     
     input [2:0] A, B, opcode;
     input cin, serial_in, direction, red_op_A, red_op_B, bypass_A, bypass_B, clk, rst;
     output reg [5:0] out;
     output reg [15:0] leds;
+    output reg [3:0] anode;
+    output reg [6:0] cathode;
+    reg [1:0] segement_counter;
+
     //this counter will start counting when invalid input entered to blink leds
-    parameter COUNTER_SIZE = 4;
-    reg [COUNTER_SIZE-1:0]blink_counter;
+    parameter MAX_COUNT = 15;
+    reg [15:0]invalid_counter;
     parameter INPUT_PRIORITY = "A";
     parameter FULL_ADDER     = "ON";
     
@@ -40,40 +46,22 @@ module ALSU (A,
         if (rst) begin
             out  <= 0;
             leds <= 0;
-            blink_counter<=~0;
+            invalid_counter<=~0;
             end 
-        else if (blink_counter != 'hf)begin
-            if (blink_counter[COUNTER_SIZE-1])
+        else if (invalid_counter != MAX_COUNT)begin
+            if (invalid_counter[15])
                 leds <= ~0;
             else begin
                 leds          <= 0;
             end
-            blink_counter <= blink_counter+1;
+            invalid_counter <= invalid_counter+1;
 
-            A_reg         <= A;
-            B_reg         <= B;
-            opcode_reg    <= opcode;
-            cin_reg       <= cin;
-            serial_in_reg <= serial_in;
-            red_op_A_reg  <= red_op_A;
-            red_op_B_reg  <= red_op_B;
-            bypass_A_reg  <= bypass_A;
-            bypass_B_reg  <= bypass_B;
         end
         else begin
             leds<=0;
 
-            A_reg         <= A;
-            B_reg         <= B;
-            opcode_reg    <= opcode;
-            cin_reg       <= cin;
-            serial_in_reg <= serial_in;
-            red_op_A_reg  <= red_op_A;
-            red_op_B_reg  <= red_op_B;
-            bypass_A_reg  <= bypass_A;
-            bypass_B_reg  <= bypass_B;
             if (opcode_reg == INVALID_1 || opcode_reg == INVALID_2 || ((red_op_A_reg || red_op_B_reg) && !(opcode_reg == AND || opcode_reg == XOR)))begin
-                blink_counter <= 0;
+                invalid_counter <= 0;
             end
 
             else begin
@@ -161,5 +149,88 @@ module ALSU (A,
                     end
                 end
             end
+            A_reg         <= A;
+            B_reg         <= B;
+            opcode_reg    <= opcode;
+            cin_reg       <= cin;
+            serial_in_reg <= serial_in;
+            red_op_A_reg  <= red_op_A;
+            red_op_B_reg  <= red_op_B;
+            bypass_A_reg  <= bypass_A;
+            bypass_B_reg  <= bypass_B;
+        end
+
+        always @(posedge clk or posedge rst) begin
+            if (rst) begin
+                if(segement_counter==0)begin
+                    anode<=4'b0001;
+                    cathode[6:0]<=~7'b1;
+                end
+                else if (segement_counter==1) begin
+                    anode<=4'b0010;
+                    cathode[6:0]<=~7'b1;
+                end
+                else if (segement_counter==2) begin
+                    anode<=4'b0100;
+                    cathode[6:0]<=7'b1;
+                end
+                else if (segement_counter==3) begin
+                    anode<=4'b1000;
+                    cathode[6:0]<=7'b1;
+                end
+                
+
+            end
+            else if(invalid_counter != MAX_COUNT)begin
+                if(segement_counter==0)begin
+                    anode<=4'b0001;
+                    cathode<=7'b0110011;
+                end
+                else if (segement_counter==1) begin
+                    anode<=4'b0010;
+                    cathode[6:0]<=~7'b1;
+                end
+                else if (segement_counter==2) begin
+                    anode<=4'b0100;
+                    cathode<=7'b0110011;
+                end
+                else if (segement_counter==3) begin
+                    anode<=4'b1000;
+                    cathode[6:0]<=7'b1001111;
+                end
+            end
+            else begin
+                if(segement_counter==0)begin
+                    anode<=4'b0001;
+                case (out[3:0])
+                    0: cathode[6:0]<=~7'b1;
+                    1: cathode<=7'b0110000;
+                    2: cathode<=7'b1101101;
+                    3: cathode<=7'b1111001;
+                    4: cathode<=7'b0110011;
+                    5: cathode<=7'b1011011;
+                    6: cathode<=7'b1011111;
+                    7: cathode<=7'b1110000;
+                    8: cathode<=7'b1111111;
+                    9: cathode<=7'b1111011;
+                    10: cathode<=7'b1110111;
+                    11: cathode<=7'b0011111;
+                    12: cathode<=7'b1001110;
+                    13: cathode<=7'b0111101;
+                    14: cathode<=7'b1001111;
+                    15: cathode<=7'b1000111;
+                endcase
+                end
+                else if(segement_counter==1)begin
+                    anode<=4'b0010;
+                case (out[5:4])
+                    0: cathode[6:0]<=~7'b1;
+                    1: cathode<=7'b0110000;
+                    2: cathode<=7'b1101101;
+                    3: cathode<=7'b1111001;
+                endcase
+                end
+            end
+            segement_counter<=segement_counter+1;
         end
         endmodule

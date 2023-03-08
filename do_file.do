@@ -13,7 +13,7 @@ sim:/ALSU_tb/serial_in_tb \
 sim:/ALSU_tb/direction_tb \
 sim:/ALSU_tb/out_dut \
 sim:/ALSU_tb/leds_dut \
-sim:/ALSU_tb/dut/blink_counter \
+sim:/ALSU_tb/dut/invalid_counter \
 sim:/ALSU_tb/rst_tb \
 sim:/ALSU_tb/red_op_A_tb \
 sim:/ALSU_tb/red_op_B_tb \

@@ -8,10 +8,12 @@ module ALSU_tb ();
  //reg  [15:0] leds_exp;
  wire [5:0] out_dut;
 // reg  [5:0] out_exp;
+wire [3:0] anode_tb;
+wire [6:0] cathode_tb;
 
 ////////////////// instantiation /////////////
 //NOTE: This testbench should be run 4 times to test all different combinations of the two parameters INPUT_PRIORITY and FULL_ADDER.
-ALSU #(.INPUT_PRIORITY("A"),.FULL_ADDER("ON" )) dut(.clk(clk), .rst(rst_tb), .cin(cin_tb), .serial_in(serial_in_tb), .red_op_A(red_op_A_tb), .red_op_B(red_op_B_tb), .bypass_A(bypass_A_tb), .bypass_B(bypass_B_tb), .direction(direction_tb), .A(A_tb), .B(B_tb), .opcode(opcode_tb), .leds(leds_dut), .out(out_dut));
+ALSU #(.INPUT_PRIORITY("A"),.FULL_ADDER("ON" )) dut(.clk(clk), .rst(rst_tb), .cin(cin_tb), .serial_in(serial_in_tb), .red_op_A(red_op_A_tb), .red_op_B(red_op_B_tb), .bypass_A(bypass_A_tb), .bypass_B(bypass_B_tb), .direction(direction_tb), .A(A_tb), .B(B_tb), .opcode(opcode_tb), .leds(leds_dut), .out(out_dut), .anode(anode_tb), .cathode(cathode_tb));
 //ALSU #(.INPUT_PRIORITY(A),.FULL_ADDER("OFF")) dut(clk, rst_tb, cin_tb, serial_in_tb, red_op_A_tb, red_op_B_tb, bypass_A_tb, bypass_B_tb, direction_tb, A_tb, B_tb, opcode_tb, leds_dut, out_dut);
 //ALSU #(.INPUT_PRIORITY(B),.FULL_ADDER("ON" )) dut(clk, rst_tb, cin_tb, serial_in_tb, red_op_A_tb, red_op_B_tb, bypass_A_tb, bypass_B_tb, direction_tb, A_tb, B_tb, opcode_tb, leds_dut, out_dut);
 //ALSU #(.INPUT_PRIORITY(B),.FULL_ADDER("OFF")) dut(clk, rst_tb, cin_tb, serial_in_tb, red_op_A_tb, red_op_B_tb, bypass_A_tb, bypass_B_tb, direction_tb, A_tb, B_tb, opcode_tb, leds_dut, out_dut);
