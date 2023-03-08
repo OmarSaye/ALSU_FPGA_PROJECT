@@ -21,7 +21,7 @@ module ALSU (A,
     output reg [15:0] leds;
     output reg [3:0] anode;
     output reg [6:0] cathode;
-    reg [1:0] segement_counter;
+    reg [1:0] segment_counter;
 
     //this counter will start counting when invalid input entered to blink leds
     parameter MAX_COUNT = 15;
@@ -46,7 +46,7 @@ module ALSU (A,
         if (rst) begin
             out  <= 0;
             leds <= 0;
-            invalid_counter<=~0;
+            invalid_counter<= MAX_COUNT;
             end 
         else if (invalid_counter != MAX_COUNT)begin
             if (invalid_counter[15])
@@ -162,75 +162,83 @@ module ALSU (A,
 
         always @(posedge clk or posedge rst) begin
             if (rst) begin
-                if(segement_counter==0)begin
+                //segment_counter<=0;
+                if(segment_counter===0)begin
                     anode<=4'b0001;
-                    cathode[6:0]<=~7'b1;
+                    cathode[6:0]<=7'b1;
                 end
-                else if (segement_counter==1) begin
+                else if (segment_counter===1) begin
                     anode<=4'b0010;
+                    cathode[6:0]<=7'b1;
+                end
+                else if (segment_counter===2) begin
+                    anode<=4'b0100;
                     cathode[6:0]<=~7'b1;
                 end
-                else if (segement_counter==2) begin
-                    anode<=4'b0100;
-                    cathode[6:0]<=7'b1;
-                end
-                else if (segement_counter==3) begin
+                else if (segment_counter===3) begin
                     anode<=4'b1000;
-                    cathode[6:0]<=7'b1;
+                    cathode[6:0]<=~7'b1;
                 end
                 
-
+                
             end
             else if(invalid_counter != MAX_COUNT)begin
-                if(segement_counter==0)begin
+                if(segment_counter==0)begin
                     anode<=4'b0001;
-                    cathode<=7'b0110011;
+                    cathode<=~7'b0110011;
                 end
-                else if (segement_counter==1) begin
+                else if (segment_counter==1) begin
                     anode<=4'b0010;
-                    cathode[6:0]<=~7'b1;
+                    cathode[6:0]<=7'b1;
                 end
-                else if (segement_counter==2) begin
+                else if (segment_counter==2) begin
                     anode<=4'b0100;
-                    cathode<=7'b0110011;
+                    cathode<=~7'b0110011;
                 end
-                else if (segement_counter==3) begin
+                else if (segment_counter==3) begin
                     anode<=4'b1000;
-                    cathode[6:0]<=7'b1001111;
+                    cathode[6:0]<=~7'b1001111;
                 end
             end
             else begin
-                if(segement_counter==0)begin
+                if(segment_counter==0)begin
                     anode<=4'b0001;
                 case (out[3:0])
-                    0: cathode[6:0]<=~7'b1;
-                    1: cathode<=7'b0110000;
-                    2: cathode<=7'b1101101;
-                    3: cathode<=7'b1111001;
-                    4: cathode<=7'b0110011;
-                    5: cathode<=7'b1011011;
-                    6: cathode<=7'b1011111;
-                    7: cathode<=7'b1110000;
-                    8: cathode<=7'b1111111;
-                    9: cathode<=7'b1111011;
-                    10: cathode<=7'b1110111;
-                    11: cathode<=7'b0011111;
-                    12: cathode<=7'b1001110;
-                    13: cathode<=7'b0111101;
-                    14: cathode<=7'b1001111;
-                    15: cathode<=7'b1000111;
+                    0: cathode[6:0]<=7'b1;
+                    1: cathode<=~7'b0110000;
+                    2: cathode<=~7'b1101101;
+                    3: cathode<=~7'b1111001;
+                    4: cathode<=~7'b0110011;
+                    5: cathode<=~7'b1011011;
+                    6: cathode<=~7'b1011111;
+                    7: cathode<=~7'b1110000;
+                    8: cathode<=~7'b1111111;
+                    9: cathode<=~7'b1111011;
+                    10: cathode<=~7'b1110111;
+                    11: cathode<=~7'b0011111;
+                    12: cathode<=~7'b1001110;
+                    13: cathode<=~7'b0111101;
+                    14: cathode<=~7'b1001111;
+                    15: cathode<=~7'b1000111;
                 endcase
                 end
-                else if(segement_counter==1)begin
+                else if(segment_counter==1)begin
                     anode<=4'b0010;
                 case (out[5:4])
-                    0: cathode[6:0]<=~7'b1;
-                    1: cathode<=7'b0110000;
-                    2: cathode<=7'b1101101;
-                    3: cathode<=7'b1111001;
+                    0: cathode[6:0]<=7'b1;
+                    1: cathode<=~7'b0110000;
+                    2: cathode<=~7'b1101101;
+                    3: cathode<=~7'b1111001;
                 endcase
                 end
             end
-            segement_counter<=segement_counter+1;
+            
+            if (segment_counter === 2'bxx) begin
+                segment_counter<=0;
+            end
+            else begin
+                segment_counter<=segment_counter+1;
+            end
+            
         end
         endmodule
