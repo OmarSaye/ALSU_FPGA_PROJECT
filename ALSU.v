@@ -49,6 +49,16 @@ module ALSU (A,
                 leds          <= 0;
             end
             blink_counter <= blink_counter+1;
+
+            A_reg         <= A;
+            B_reg         <= B;
+            opcode_reg    <= opcode;
+            cin_reg       <= cin;
+            serial_in_reg <= serial_in;
+            red_op_A_reg  <= red_op_A;
+            red_op_B_reg  <= red_op_B;
+            bypass_A_reg  <= bypass_A;
+            bypass_B_reg  <= bypass_B;
         end
         else begin
             leds<=0;

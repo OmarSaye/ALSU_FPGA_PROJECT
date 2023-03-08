@@ -169,12 +169,13 @@ for (i=0; i<16; i=i+1) begin
 end  
 
 //wait until blinking stops
-@(negedge clk);
+//@(negedge clk);
 opcode_tb=3'b010;
-@(negedge leds_dut[15]);
+//@(negedge leds_dut[15]);
+// opcode_tb=3'b010;
 ///////////////////////////////  TESTING ADDITION & MULTIPLICATION  //////////////////////////////////////
-@(negedge clk);
-opcode_tb=3'b010; //1st 50 runs : addition
+//@(negedge clk);
+//opcode_tb=3'b010; //1st 50 runs : addition
 for (i=0; i<100; i=i+1) begin
 	@(negedge clk);
 	if (i>50)
@@ -200,25 +201,25 @@ end
 
 ///////////////////////////////////  TESTING SHIFT & ROTATION /////////////////////////////////////////////
 @(negedge clk);
-opcode_tb=3'b011; //1st 100 runs: shift
+opcode_tb=3'b100; //1st 100 runs: shift
 direction_tb=1; //1st 50 runs of each: left
 for (i=1; i<200; i=i+1) begin
 	@(negedge clk);
 
-	if (i>50) //other 50 runs: right
+	if (i>150) //other 50 runs: right
 	direction_tb=0; //left
 	else if (i>100) begin //other 100 runs: rotate
-	opcode_tb=3'b011;
+	opcode_tb=3'b101;
 	direction_tb=1;
 	end  
-	else if (i>150) 
+	else if (i>50) 
 	direction_tb=0;
 
     cin_tb=$random;
 	A_tb=$random;
   	B_tb=$random;
   	serial_in_tb=$random;
-  	direction_tb=$random;
+  	//direction_tb=$random;
 end
 
 $stop;
